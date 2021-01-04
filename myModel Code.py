@@ -7,7 +7,7 @@ from PyQt5.QtCore import *
 # this is another change
 # this is a third change
 
-SSSdfsafsafafd
+
 
 class myModel(QAbstractItemModel):
 
