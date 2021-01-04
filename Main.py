@@ -57,18 +57,18 @@ class UiMainWindow(object):
         self.insertRowAction.setObjectName("insertRowAction")
         self.removeRowAction = QtWidgets.QAction(main_window)
         self.removeRowAction.setObjectName("removeRowAction")
-        self.insertColumnAction = QtWidgets.QAction(main_window)
-        self.insertColumnAction.setObjectName("insertColumnAction")
-        self.removeColumnAction = QtWidgets.QAction(main_window)
-        self.removeColumnAction.setObjectName("removeColumnAction")
+        # self.insertColumnAction = QtWidgets.QAction(main_window)
+        # self.insertColumnAction.setObjectName("insertColumnAction")
+        # self.removeColumnAction = QtWidgets.QAction(main_window)
+        # self.removeColumnAction.setObjectName("removeColumnAction")
         self.insertChildAction = QtWidgets.QAction(main_window)
         self.insertChildAction.setObjectName("insertChildAction")
         self.fileMenu.addAction(self.exitAction)
         self.actionsMenu.addAction(self.insertRowAction)
-        self.actionsMenu.addAction(self.insertColumnAction)
+        # self.actionsMenu.addAction(self.insertColumnAction)
         self.actionsMenu.addSeparator()
         self.actionsMenu.addAction(self.removeRowAction)
-        self.actionsMenu.addAction(self.removeColumnAction)
+        # self.actionsMenu.addAction(self.removeColumnAction)
         self.actionsMenu.addSeparator()
         self.actionsMenu.addAction(self.insertChildAction)
         self.menubar.addAction(self.fileMenu.menuAction())
@@ -88,10 +88,10 @@ class UiMainWindow(object):
         self.insertRowAction.setShortcut(_translate("main_window", "Ctrl+I, R"))
         self.removeRowAction.setText(_translate("main_window", "Remove Row"))
         self.removeRowAction.setShortcut(_translate("main_window", "Ctrl+R, R"))
-        self.insertColumnAction.setText(_translate("main_window", "Insert Column"))
-        self.insertColumnAction.setShortcut(_translate("main_window", "Ctrl+I, C"))
-        self.removeColumnAction.setText(_translate("main_window", "Remove Column"))
-        self.removeColumnAction.setShortcut(_translate("main_window", "Ctrl+R, C"))
+        # self.insertColumnAction.setText(_translate("main_window", "Insert Column"))
+        # self.insertColumnAction.setShortcut(_translate("main_window", "Ctrl+I, C"))
+        # self.removeColumnAction.setText(_translate("main_window", "Remove Column"))
+        # self.removeColumnAction.setShortcut(_translate("main_window", "Ctrl+R, C"))
         self.insertChildAction.setText(_translate("main_window", "Insert Child"))
         self.insertChildAction.setShortcut(_translate("main_window", "Ctrl+N"))
 
@@ -112,6 +112,7 @@ class MainWindow(QMainWindow, UiMainWindow):
         # self.updateActions()
 
     def insertChild(self):
+        print("Entered insertChild in Main Window")
         index = self.view.selectionModel().currentIndex()
         model = self.view.model()
 
@@ -132,7 +133,7 @@ class MainWindow(QMainWindow, UiMainWindow):
         self.view.selectionModel().setCurrentIndex(model.index(0, 0, index),
                 QItemSelectionModel.ClearAndSelect)
         self.updateActions()
-
+    '''
     def insertColumn(self):
         model = self.view.model()
         column = self.view.selectionModel().currentIndex().column()
@@ -145,6 +146,7 @@ class MainWindow(QMainWindow, UiMainWindow):
         self.updateActions()
 
         return changed
+    '''
 
     def insertRow(self):
         index = self.view.selectionModel().currentIndex()
@@ -158,7 +160,7 @@ class MainWindow(QMainWindow, UiMainWindow):
         for column in range(model.columnCount(index.parent())):
             child = model.index(index.row()+1, column, index.parent())
             model.setData(child, "[No data]", Qt.EditRole)
-
+    '''
     def removeColumn(self):
         model = self.view.model()
         column = self.view.selectionModel().currentIndex().column()
@@ -168,7 +170,7 @@ class MainWindow(QMainWindow, UiMainWindow):
             self.updateActions()
 
         return changed
-
+    '''
     def removeRow(self):
         index = self.view.selectionModel().currentIndex()
         model = self.view.model()

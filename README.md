@@ -21,3 +21,6 @@ to a new spot.   At present there is still a problem with copying dragging nodes
 While I only display the name of the item, it is part of a tuble that has it row from the SQL database and its SQL parent. I need this information for both the 
 tagging and SQL database reparenting.  I was unable to do this initially using QstandardItem objects for the tree Items.  Just before completing this I changed TreeItem
 to be based on QStandardItem rather than Qobject.  To my surprise it seems to work, so this will allow some rework of the code eventually.
+
+The samples this work is based on had references for doing work on columns.  These have been left in, but it they are not used
+in my implementation.  But if you have table rather than a treeview they might be useful.
