@@ -8,8 +8,6 @@ import photo_database_code
 from photo_database_code import *
 
 
-
-
 SortRole = Qt.UserRole + 1
 
 

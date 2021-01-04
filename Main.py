@@ -1,35 +1,35 @@
 #!/usr/bin/env python
 
 ############################################################################
-##
-## Copyright (C) 2005-2005 Trolltech AS. All rights reserved.
-##
-## This file is part of the example classes of the Qt Toolkit.
-##
-## This file may be used under the terms of the GNU General Public
-## License version 2.0 as published by the Free Software Foundation
-## and appearing in the file LICENSE.GPL included in the packaging of
-## this file.  Please review the following information to ensure GNU
-## General Public Licensing requirements will be met:
-## http://www.trolltech.com/products/qt/opensource.html
-##
-## If you are unsure which license is appropriate for your use, please
-## review the following information:
-## http://www.trolltech.com/products/qt/licensing.html or contact the
-## sales department at sales@trolltech.com.
-##
-## This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-## WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-##
-############################################################################
+#
+# Copyright (C) 2005-2005 Trolltech AS. All rights reserved.
+#
+# This file is part of the example classes of the Qt Toolkit.
+#
+# This file may be used under the terms of the GNU General Public
+# License version 2.0 as published by the Free Software Foundation
+# and appearing in the file LICENSE.GPL included in the packaging of
+# this file.  Please review the following information to ensure GNU
+# General Public Licensing requirements will be met:
+# http://www.trolltech.com/products/qt/opensource.html
+#
+# If you are unsure which license is appropriate for your use, please
+# review the following information:
+# http://www.trolltech.com/products/qt/licensing.html or contact the
+# sales department at sales@trolltech.com.
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+##############################################################################
 import sys
 from myTreeViewCode import *
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(300, 800)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+
+class UiMainWindow(object):
+    def setup_ui(self, main_window):
+        main_window.setObjectName("main_window")
+        main_window.resize(400, 800)
+        self.centralwidget = QtWidgets.QWidget(main_window)
         self.centralwidget.setObjectName("centralwidget")
         self.vboxlayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.vboxlayout.setContentsMargins(0, 0, 0, 0)
@@ -38,30 +38,30 @@ class Ui_MainWindow(object):
         self.view = myTreeView(self.centralwidget)
         self.view.setObjectName("view")
         self.vboxlayout.addWidget(self.view)
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        main_window.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(main_window)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 573, 31))
         self.menubar.setObjectName("menubar")
         self.fileMenu = QtWidgets.QMenu(self.menubar)
         self.fileMenu.setObjectName("fileMenu")
         self.actionsMenu = QtWidgets.QMenu(self.menubar)
         self.actionsMenu.setObjectName("actionsMenu")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        main_window.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(main_window)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-        '''
-        self.exitAction = QtWidgets.QAction(MainWindow)
+        main_window.setStatusBar(self.statusbar)
+
+        self.exitAction = QtWidgets.QAction(main_window)
         self.exitAction.setObjectName("exitAction")
-        self.insertRowAction = QtWidgets.QAction(MainWindow)
+        self.insertRowAction = QtWidgets.QAction(main_window)
         self.insertRowAction.setObjectName("insertRowAction")
-        self.removeRowAction = QtWidgets.QAction(MainWindow)
+        self.removeRowAction = QtWidgets.QAction(main_window)
         self.removeRowAction.setObjectName("removeRowAction")
-        self.insertColumnAction = QtWidgets.QAction(MainWindow)
+        self.insertColumnAction = QtWidgets.QAction(main_window)
         self.insertColumnAction.setObjectName("insertColumnAction")
-        self.removeColumnAction = QtWidgets.QAction(MainWindow)
+        self.removeColumnAction = QtWidgets.QAction(main_window)
         self.removeColumnAction.setObjectName("removeColumnAction")
-        self.insertChildAction = QtWidgets.QAction(MainWindow)
+        self.insertChildAction = QtWidgets.QAction(main_window)
         self.insertChildAction.setObjectName("insertChildAction")
         self.fileMenu.addAction(self.exitAction)
         self.actionsMenu.addAction(self.insertRowAction)
@@ -74,34 +74,33 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.fileMenu.menuAction())
         self.menubar.addAction(self.actionsMenu.menuAction())
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        '''
-    def retranslateUi(self, MainWindow):
+        self.retranslate_ui(main_window)
+        QtCore.QMetaObject.connectSlotsByName(main_window)
+
+    def retranslate_ui(self, main_window):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Editable Tree Model"))
-        self.fileMenu.setTitle(_translate("MainWindow", "&File"))
-        self.actionsMenu.setTitle(_translate("MainWindow", "&Actions"))
-        self.exitAction.setText(_translate("MainWindow", "E&xit"))
-        self.exitAction.setShortcut(_translate("MainWindow", "Ctrl+Q"))
-        self.insertRowAction.setText(_translate("MainWindow", "Insert Row"))
-        self.insertRowAction.setShortcut(_translate("MainWindow", "Ctrl+I, R"))
-        self.removeRowAction.setText(_translate("MainWindow", "Remove Row"))
-        self.removeRowAction.setShortcut(_translate("MainWindow", "Ctrl+R, R"))
-        self.insertColumnAction.setText(_translate("MainWindow", "Insert Column"))
-        self.insertColumnAction.setShortcut(_translate("MainWindow", "Ctrl+I, C"))
-        self.removeColumnAction.setText(_translate("MainWindow", "Remove Column"))
-        self.removeColumnAction.setShortcut(_translate("MainWindow", "Ctrl+R, C"))
-        self.insertChildAction.setText(_translate("MainWindow", "Insert Child"))
-        self.insertChildAction.setShortcut(_translate("MainWindow", "Ctrl+N"))
+        main_window.setWindowTitle(_translate("main_window", "Editable Tree Model"))
+        self.fileMenu.setTitle(_translate("main_window", "&File"))
+        self.actionsMenu.setTitle(_translate("main_window", "&Actions"))
+        self.exitAction.setText(_translate("main_window", "E&xit"))
+        self.exitAction.setShortcut(_translate("main_window", "Ctrl+Q"))
+        self.insertRowAction.setText(_translate("main_window", "Insert Row"))
+        self.insertRowAction.setShortcut(_translate("main_window", "Ctrl+I, R"))
+        self.removeRowAction.setText(_translate("main_window", "Remove Row"))
+        self.removeRowAction.setShortcut(_translate("main_window", "Ctrl+R, R"))
+        self.insertColumnAction.setText(_translate("main_window", "Insert Column"))
+        self.insertColumnAction.setShortcut(_translate("main_window", "Ctrl+I, C"))
+        self.removeColumnAction.setText(_translate("main_window", "Remove Column"))
+        self.removeColumnAction.setShortcut(_translate("main_window", "Ctrl+R, C"))
+        self.insertChildAction.setText(_translate("main_window", "Insert Child"))
+        self.insertChildAction.setShortcut(_translate("main_window", "Ctrl+N"))
 
 
-class MainWindow(QMainWindow, Ui_MainWindow):
+class MainWindow(QMainWindow, UiMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
-        self.setupUi(self)
-        headers = ("Tag", "Database Row", "Sort Column", "DB Parent Row YY")
-        # self.exitAction.triggered.connect(QApplication.instance().quit)
+        self.setup_ui(self)
+        self.exitAction.triggered.connect(QApplication.instance().quit)
         # self.view.selectionModel().selectionChanged.connect(self.updateActions)
         # self.actionsMenu.aboutToShow.connect(self.updateActions)
         # self.insertRowAction.triggered.connect(self.insertRow)
@@ -111,7 +110,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.insertChildAction.triggered.connect(self.insertChild)
 
         # self.updateActions()
-    '''
+
     def insertChild(self):
         index = self.view.selectionModel().currentIndex()
         model = self.view.model()
@@ -195,7 +194,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.statusBar().showMessage("Position: (%d,%d)" % (row, column))
             else:
                 self.statusBar().showMessage("Position: (%d,%d) in top level" % (row, column))
-    '''
+
+
 
 if __name__ == "__main__":
 
