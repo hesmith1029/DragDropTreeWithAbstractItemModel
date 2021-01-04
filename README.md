@@ -1,5 +1,5 @@
 # DragDropTreeWithAbstractItemModel
-PyQt TreeView with AbstractItemModel with Drag and Drop and SQL Data Source
+PyQt TreeView with AbstractItemModel with Drag and Drop and SQL Data Source.  
 Getting a full blown TreeView linked to an implementtion of QAbstractItemModel has been an effort.
 Lots of snippets and limited models.  But no complete project that I could learn from. So I thought I would put this up so maybe others can learn.
 
