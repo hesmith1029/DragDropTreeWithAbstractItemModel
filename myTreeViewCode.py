@@ -16,6 +16,18 @@ class PyMimeData(QMimeData):
     """
     # The MIME type for instances.
     # MIME_TYPE = QString('application/x-ets-qt4-instance')
+    ''' This class is pretty much as I found it.  However all of the stuff
+    about serializing the data does not work.  The TreeItem indexes passed along by the
+    start Drag functions can not be serialized.
+    
+    This module works because 1) We are draging and dropping within the same program
+    and 2)  It perserves a copy of the data here in the INSTANCE variable.  On drop we then
+    retrieve that data.
+    '''
+
+
+
+
     MIME_TYPE = 'application/x-ets-qt5-instance'  # maybe qt5
 
     def __init__(self, data=None):
@@ -25,6 +37,10 @@ class PyMimeData(QMimeData):
         QMimeData.__init__(self)
 
         # Keep a local reference to be returned if possible.
+        # it because we do this that this class works at all.  The tree items
+        # can not be pickled.  At least as they stand now.  I believe some methods can
+        # be added to the TreeItem class so they cn be serialized.
+
         self._local_instance = data
 
         if data is not None:
@@ -62,9 +78,11 @@ possible.
     def instance(self):
         """ Return the instance.
         """
-        print("Entered instance of PyMimeData")
+        # print("Entered instance of PyMimeData")
         if self._local_instance is not None:
             return self._local_instance
+        # This is where we get the mimedata back on dropping.
+
 
         io = StringIO(str(self.data(self.MIME_TYPE)))
 
@@ -81,7 +99,6 @@ possible.
         return None
 
     def instanceType(self):
-        print("entered instanceType")
         """ Return the type of the instance.
         """
         if self._local_instance is not None:
@@ -111,8 +128,8 @@ class TreeItem(QStandardItem):
         self.itemData = data
         self.childItems = []
         # set default setting
-        self.DropEnabled = False
-        self.Checkstatus = Qt.Unchecked
+        self.DropEnabled = False                # this is needed because we are rolling our own Class, Pre QStandardItem
+        self.Checkstatus = Qt.Unchecked         # this is needed because we are rolling our own Class basee on QObject.
 
     def appendChild(self, child):
         # required - loads initial data
@@ -145,6 +162,8 @@ class TreeItem(QStandardItem):
     def insertChildren(self, data, position, rowcount, columns, acceptdrops):
         # from editable model
         # required
+        # Added acceptdrops to standard prototypes, as we need this set for nodes with children (containers) to make
+        # Drag and Drop more intuitive.  People expect to be able to drop ONTO containers.
         if position < 0 or position > len(self.childItems):
             return False
         for row in range(rowcount):  # row count is always 1 in our model.
@@ -186,8 +205,6 @@ class TreeItem(QStandardItem):
 
     def isDropEnabled(self):
         # required
-        return self.DropEnabled
-
         # this makes drop Enabled dynamic.  If it has children Yes, otherwise no.  help in drag and drop creation of new items.
         if len(self.childItems) > 0:
             return True
@@ -196,6 +213,7 @@ class TreeItem(QStandardItem):
 
     def checkboxstate(self):
         # required if you want check boxes
+        # because we are rolling our own treeitem class
         return self.Checkstatus
 
     def setcheckboxstate(self, value):
@@ -264,10 +282,8 @@ class TreeModel(QtCore.QAbstractItemModel):
         rootData = [header for header in headers]
         self.rootItem = TreeItem(rootData)  # this is required because setupModelData needs a parent.
         self.rootItem.setDropEnabled(False)
-        # self.headers = ['Tag', 'Database Row', 'Sort Column', "XX Parent Row"]      # requirement from Drag Drop model
         self.setupModelData(data, self.rootItem)
         self.columns = 4
-        # self.dataChanged.emit(QModelIndex(), QModelIndex())
         print("exiting TreeModel __init__")
 
     def columnCount(self, parent):
@@ -280,6 +296,7 @@ class TreeModel(QtCore.QAbstractItemModel):
 
     def data(self, index, role=None):
         # required
+        #  This is good place to see how ROLES really work.
         row = index.row()
         column = index.column()
         if role == Qt.DecorationRole:
