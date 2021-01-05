@@ -344,9 +344,10 @@ class TreeModel(QtCore.QAbstractItemModel):
         else:
             return QModelIndex()
 
-    def insertRow(self, data, row, parent, acceptdrops=False):
+    def insertRow(self, data, row, parent, acceptdrops = False):
         # required
         # from drag Drop model
+        print(type(data))
         return self.insertRows(data, row, 1, acceptdrops, parent)
 
     def insertRows(self, data, position, rows, acceptdrops, irparentindex=QModelIndex()):

@@ -21,6 +21,12 @@
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 ##############################################################################
+'''  This main is entirely taken from the source above
+It is not part my project, but just useful for hosting Treeview while
+I work out the bugs and features I need.  The editing from the menubar is
+just for testing.'''
+
+
 import sys
 from myTreeViewCode import *
 
@@ -53,8 +59,8 @@ class UiMainWindow(object):
 
         self.exitAction = QtWidgets.QAction(main_window)
         self.exitAction.setObjectName("exitAction")
-        self.insertRowAction = QtWidgets.QAction(main_window)
-        self.insertRowAction.setObjectName("insertRowAction")
+        # self.insertRowAction = QtWidgets.QAction(main_window)
+        # self.insertRowAction.setObjectName("insertRowAction")
         self.removeRowAction = QtWidgets.QAction(main_window)
         self.removeRowAction.setObjectName("removeRowAction")
         # self.insertColumnAction = QtWidgets.QAction(main_window)
@@ -64,7 +70,7 @@ class UiMainWindow(object):
         self.insertChildAction = QtWidgets.QAction(main_window)
         self.insertChildAction.setObjectName("insertChildAction")
         self.fileMenu.addAction(self.exitAction)
-        self.actionsMenu.addAction(self.insertRowAction)
+        # self.actionsMenu.addAction(self.insertRowAction)
         # self.actionsMenu.addAction(self.insertColumnAction)
         self.actionsMenu.addSeparator()
         self.actionsMenu.addAction(self.removeRowAction)
@@ -84,8 +90,8 @@ class UiMainWindow(object):
         self.actionsMenu.setTitle(_translate("main_window", "&Actions"))
         self.exitAction.setText(_translate("main_window", "E&xit"))
         self.exitAction.setShortcut(_translate("main_window", "Ctrl+Q"))
-        self.insertRowAction.setText(_translate("main_window", "Insert Row"))
-        self.insertRowAction.setShortcut(_translate("main_window", "Ctrl+I, R"))
+        # self.insertRowAction.setText(_translate("main_window", "Insert Row"))
+        # self.insertRowAction.setShortcut(_translate("main_window", "Ctrl+I, R"))
         self.removeRowAction.setText(_translate("main_window", "Remove Row"))
         self.removeRowAction.setShortcut(_translate("main_window", "Ctrl+R, R"))
         # self.insertColumnAction.setText(_translate("main_window", "Insert Column"))
@@ -101,16 +107,16 @@ class MainWindow(QMainWindow, UiMainWindow):
         super(MainWindow, self).__init__(parent)
         self.setup_ui(self)
         self.exitAction.triggered.connect(QApplication.instance().quit)
-        # self.view.selectionModel().selectionChanged.connect(self.updateActions)
-        # self.actionsMenu.aboutToShow.connect(self.updateActions)
+        self.view.selectionModel().selectionChanged.connect(self.updateActions)
+        self.actionsMenu.aboutToShow.connect(self.updateActions)
         # self.insertRowAction.triggered.connect(self.insertRow)
         # self.insertColumnAction.triggered.connect(self.insertColumn)
-        # self.removeRowAction.triggered.connect(self.removeRow)
+        self.removeRowAction.triggered.connect(self.removeRow)
         # self.removeColumnAction.triggered.connect(self.removeColumn)
         # self.insertChildAction.triggered.connect(self.insertChild)
 
         # self.updateActions()
-
+    '''
     def insertChild(self):
         print("Entered insertChild in Main Window")
         index = self.view.selectionModel().currentIndex()
@@ -134,6 +140,7 @@ class MainWindow(QMainWindow, UiMainWindow):
                 QItemSelectionModel.ClearAndSelect)
         self.updateActions()
     '''
+    '''
     def insertColumn(self):
         model = self.view.model()
         column = self.view.selectionModel().currentIndex().column()
@@ -147,12 +154,13 @@ class MainWindow(QMainWindow, UiMainWindow):
 
         return changed
     '''
-
+    '''
     def insertRow(self):
+        print("Entered insertRow in MainWindow")
         index = self.view.selectionModel().currentIndex()
         model = self.view.model()
-
-        if not model.insertRow(index.row()+1, index.parent()):
+        data = ("Jack", '22', "Jack", '4')
+        if not model.insertRow(data, index.row()+1, index.parent()):
             return
 
         self.updateActions()
@@ -160,6 +168,7 @@ class MainWindow(QMainWindow, UiMainWindow):
         for column in range(model.columnCount(index.parent())):
             child = model.index(index.row()+1, column, index.parent())
             model.setData(child, "[No data]", Qt.EditRole)
+    '''
     '''
     def removeColumn(self):
         model = self.view.model()
@@ -172,6 +181,7 @@ class MainWindow(QMainWindow, UiMainWindow):
         return changed
     '''
     def removeRow(self):
+        print("Entered removeRow in Main Window")
         index = self.view.selectionModel().currentIndex()
         model = self.view.model()
 
@@ -179,13 +189,14 @@ class MainWindow(QMainWindow, UiMainWindow):
             self.updateActions()
 
     def updateActions(self):
+        print("Entered updateActions in Main Window")
         hasSelection = not self.view.selectionModel().selection().isEmpty()
         self.removeRowAction.setEnabled(hasSelection)
-        self.removeColumnAction.setEnabled(hasSelection)
+        # self.removeColumnAction.setEnabled(hasSelection)
 
         hasCurrent = self.view.selectionModel().currentIndex().isValid()
-        self.insertRowAction.setEnabled(hasCurrent)
-        self.insertColumnAction.setEnabled(hasCurrent)
+        # self.insertRowAction.setEnabled(hasCurrent)
+        # self.insertColumnAction.setEnabled(hasCurrent)
 
         if hasCurrent:
             self.view.closePersistentEditor(self.view.selectionModel().currentIndex())
