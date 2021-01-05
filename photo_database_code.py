@@ -15,14 +15,11 @@ class PhotoDatabase:
         self.connect()
 
         print("we are now connected to database")
-#  Check status of database and create and itialize if needed
+        #  Check status of database and create and initialize if needed
         self.create_tables()            # This creates tables if the do not exist.  Also seeds tags table.
 
         # statements verify or create new database go here
         self.close_database()        # close up database and reopen each time needed.
-
-    def testdbobject(self):
-        print("The photodabase class is available")
 
     def dbnametest(self):
         return self.database
@@ -139,13 +136,10 @@ class PhotoDatabase:
     def commit(self):
         self.connection.commit()
 
-    def update_parent_tag(self, tag_row = None, new_parent = None):
-        print("Reached update parent tag")
-        # print(tag_row)
-        # print(new_parent)
+    def update_parent_tag(self, tag_row=None, new_parent=None):
+        # print("Reached update parent tag")
         self.connect()
-        # print(self.connect_status())
-        sq = "UPDATE tags SET parentID = " + str(new_parent) + " WHERE id = " + str(tag_row) +" ;"
+        sq = "UPDATE tags SET parentID = " + str(new_parent) + " WHERE id = " + str(tag_row) + " ;"
         self.execute(sq)
         self.commit()
 
@@ -177,5 +171,5 @@ def create_data_dir(photo_data_path=None):
             print("making THUMBS directory")
         except Exception as err:
             print(err)
-            print("Failed to creath THUMBS directory")
+            print("Failed to create THUMBS directory")
     return photo_data_path

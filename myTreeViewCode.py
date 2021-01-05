@@ -25,9 +25,6 @@ class PyMimeData(QMimeData):
     retrieve that data.
     '''
 
-
-
-
     MIME_TYPE = 'application/x-ets-qt5-instance'  # maybe qt5
 
     def __init__(self, data=None):
@@ -83,7 +80,6 @@ possible.
             return self._local_instance
         # This is where we get the mimedata back on dropping.
 
-
         io = StringIO(str(self.data(self.MIME_TYPE)))
 
         try:
@@ -98,7 +94,7 @@ possible.
 
         return None
 
-    def instanceType(self):
+    def instance_type(self):
         """ Return the type of the instance.
         """
         if self._local_instance is not None:
@@ -107,7 +103,7 @@ possible.
         try:
             return loads(str(self.data(self.MIME_TYPE)))
         except:
-            print("instanceType, load failed.")
+            print("instance_type, load failed.")
             pass
 
         return None
@@ -136,7 +132,7 @@ class TreeItem(QStandardItem):
         # from drag drop model
         self.childItems.append(child)
 
-    def child(self, row):
+    def child(self, row, column=None):         # Column is not used in this implementation, put parameter kept to be compatible with prototype.
         # required
         # from simple and editable examples
         return self.childItems[row]
@@ -205,11 +201,7 @@ class TreeItem(QStandardItem):
 
     def isDropEnabled(self):
         # required
-        # this makes drop Enabled dynamic.  If it has children Yes, otherwise no.  help in drag and drop creation of new items.
-        if len(self.childItems) > 0:
-            return True
-        else:
-            return False
+        return self.DropEnabled
 
     def checkboxstate(self):
         # required if you want check boxes
@@ -237,9 +229,8 @@ class TreeItem(QStandardItem):
 
     def childNumber(self):
         print("Entered Child number - Tree Item")
-        print(self)
         # from simple and editable examples
-        if self.parentItem != None:
+        if self.parentItem is not None:
             return self.parentItem.childItems.index(self)
 
     def insertColumns(self, position, columns):
@@ -286,7 +277,7 @@ class TreeModel(QtCore.QAbstractItemModel):
         self.columns = 4
         print("exiting TreeModel __init__")
 
-    def columnCount(self, parent):
+    def columnCount(self, parent=None):
         # Required
         # from Simple tree model, similar to Editable tree model
         if parent.isValid():
@@ -296,7 +287,11 @@ class TreeModel(QtCore.QAbstractItemModel):
 
     def data(self, index, role=None):
         # required
-        #  This is good place to see how ROLES really work.
+        #  This is good place to see how ROLES really work.  data that is used for a specific purpose is accessed
+        # by requesting it.  The ROLE is an integer that has been defined to refer to that data.  In this case when
+        # the model requests data of SORTROLE we return item.data(2). We could return anything but the Model is
+        # going to use if for sorting.  When CheckStateRole is requested it is going to use that to populate the check
+        # box
         row = index.row()
         column = index.column()
         if role == Qt.DecorationRole:
@@ -322,14 +317,16 @@ class TreeModel(QtCore.QAbstractItemModel):
 
     def flags(self, index):
         # required
+        """ Flags are what model uses internally to decide what it is allowed to do or not.  They are integers.  QT
+        has definded these strings to have specific values.  This makes things easier then trying to rember the
+        number value.  It is a more complex than this, so read up on it."""
         node = self.nodeFromIndex(index)
         defaultFlags = QAbstractItemModel.flags(self, index)  # from drag drop model
         if not index.isValid():
             # print("index is not valid - flags - TreeModel")
             return defaultFlags  # returning a valid flag keeps things from crashing.
         if node.isDropEnabled():
-            # return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsDropEnabled | defaultFlags
-            return QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsDropEnabled | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled | defaultFlags
+             return QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsDropEnabled | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled | defaultFlags
         else:
             return QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled | defaultFlags
 
@@ -352,22 +349,21 @@ class TreeModel(QtCore.QAbstractItemModel):
     def index(self, row, column, parent=QModelIndex()):
         # required
         # from editable model
-        if parent.isValid() and parent.column() != 0:
+        if parent.isValid() and parent.column() != 0:   # we want the index the Row, not specific items
             return QModelIndex()
         parentItem = self.getItem(parent)
         childItem = parentItem.child(row)
         if childItem:
-            return self.createIndex(row, column, childItem)
+            return self.createIndex(row, column, childItem)    # colomn is always zero if we are here
         else:
             return QModelIndex()
 
-    def insertRow(self, data, row, parent, acceptdrops = False):
+    def insertRow(self, data, row, parent, acceptdrops=False):   # modified from base method to include acceptdrops
         # required
         # from drag Drop model
-        print(type(data))
         return self.insertRows(data, row, 1, acceptdrops, parent)
 
-    def insertRows(self, data, position, rows, acceptdrops, irparentindex=QModelIndex()):
+    def insertRows(self, data, position, rows, acceptdrops, irparentindex=QModelIndex()):  # modified from base method
         # Required
         # from editable model
         parentItem = self.getItem(irparentindex)
@@ -415,7 +411,6 @@ class TreeModel(QtCore.QAbstractItemModel):
     def setData(self, index, value, role=Qt.EditRole):
         # required
         # from editable model
-        # reviewed
         item = self.getItem(index)
         if role == Qt.EditRole:
             result = item.setData(index.column(), value)
@@ -446,38 +441,36 @@ class TreeModel(QtCore.QAbstractItemModel):
     def mimeData(self, indices):
         #  required
         # from drag drep model
-        print("Enetered mimeData - TreeModel")
-
-        node = self.nodeFromIndex(indices[0])
+        # print("Enetered mimeData - TreeModel")
         mimeData = PyMimeData(indices)
-        print(type(mimeData))
-        print(mimeData)
         return mimeData
 
     def canDropMimeData(self, data, action: Qt.DropAction, row: int, column: int, parent: QModelIndex) -> bool:
         # required
         droptarget = self.nodeFromIndex(parent)
         dropok = droptarget.isDropEnabled()
-        print(dropok)
         return dropok
 
     def dropMimeData(self, mimedata, action, row, column, parentIndex):
         # from drag drop model
         # print("Entered drop MimeData")
         # print("Target Row is " + str(row))
-        print("Drop MimeData Action " + str(action))
+        # print("Drop MimeData Action " + str(action))
         if row == -1:  # this means we are dropping ONTO the target, not below so insert at top of list.
             row = 0
         if action == Qt.IgnoreAction:
             print("returned for Ignore Action")
             return True
         dragNode = mimedata.instance()
-        index = len(dragNode) - 1
+        index = len(dragNode) - 1       # number items we have to process
         result = True
         dragNodeParent = None
+        '''
+        mimedata turns a list of TreeItems.  It returns child items first and parent (top level) items last
+        so we have to process in reverse order '''
         while index >= 0:
             onenode = self.nodeFromIndex(dragNode[index])
-            if dragNodeParent == None:
+            if dragNodeParent is None:
                 dragNodeParent = onenode.parentItem  # populates with first item processed
             if dragNodeParent is not onenode.parentItem:
                 index -= 1
@@ -496,7 +489,7 @@ class TreeModel(QtCore.QAbstractItemModel):
             # dragging a container with children
             childresult = self.dropOneRow(newdata, row, parentIndex,
                                           True)  # process the parent node, should accept drops
-            if childresult == None:
+            if childresult is None:
                 print("drop one Row failed in Drop many Rows")
                 result = False
             # now update the underlying database
@@ -509,18 +502,18 @@ class TreeModel(QtCore.QAbstractItemModel):
             for childnode in dragchilds:
                 if childnode.childCount() > 0:
                     childresult2 = self.dropManyRows2(childnode, 0, childresult, result)  # We are going Two levels deep
-                    if childresult2 == None:
+                    if childresult2 is None:
                         print("Drop Many rows 2 returned False")
                         result = False
                 else:
                     childdata = childnode.itemData
                     childresultx = self.dropOneRow(childdata, 0, childresult)  # also insert into row 0 Model will sort
-                    if childresultx == None:
+                    if childresultx is None:
                         result = False  # If any opertion fails then whole move fails
             return result
         else:
             dropresult = self.dropOneRow(newdata, row, parentIndex)
-            if dropresult == None:
+            if dropresult is None:
                 result = False
             # now update the underlying database
             db_row_to_update = newdata[1]
@@ -530,11 +523,11 @@ class TreeModel(QtCore.QAbstractItemModel):
             return result
 
     def dropManyRows2(self, dragNode, row, parentIndex, result):
-        print("in Drop Many TWO")
+        # print("in Drop Many TWO")
         newdata = dragNode.itemData
         if dragNode.childCount() > 0:
             childresult = self.dropOneRow(newdata, row, parentIndex, True)
-            if childresult == None:
+            if childresult is None:
                 result = False
                 print("drop one failed in Drop Many 2")
             dragchilds = dragNode.childItems
@@ -542,24 +535,24 @@ class TreeModel(QtCore.QAbstractItemModel):
                 if childnode.childCount() > 0:
                     childresultz = self.dropManyRows2(childnode, 0, childresult,
                                                       result)  # we are going three or more levels deep
-                    if childresultz == None:
+                    if childresultz is None:
                         result = False
                 else:
                     childdata = childnode.itemData
                     childresultx = self.dropOneRow(childdata, 0, childresult)  # also insert into row 0 Model will sort
-                    if childresultx == None:
+                    if childresultx is None:
                         print("drop one failed in Dropmanyrows 2 -xxx")
                         result = False  # If any opertion fails then whole move fails
             return result
         else:
             childresult = self.dropOneRow(newdata, row, parentIndex)
-            if childresult == None:
+            if childresult is None:
                 result = False
             return result
 
     def dropOneRow(self, newdata, row, dpparentIndex, acceptdrop=False):
         # required
-        result = self.insertRow(newdata, row, dpparentIndex)  # this inserts the row into the Model
+        result = self.insertRow(newdata, row, dpparentIndex, acceptdrop)  # this inserts the row into the Model
         self.dataChanged.emit(QModelIndex(), dpparentIndex)  # Let the world know we update the Model
         if result:
             # we need to create an index that point to the object just created, in case this a container row.
@@ -584,20 +577,17 @@ class TreeModel(QtCore.QAbstractItemModel):
         # we can not load a row unless the parent has already been inserted.  This keeps track of what has been inserted.
         while data2:
             row = data2.pop(0)
-            if row[1] == 0:  # Level data - unique to my data
-                parent = root  # parent is a standard TreeItem object
+            if row[1] == 0:                 # Level data - unique to my data
+                parent = root               # parent is a standard TreeItem object
             else:
-                parent_id = row[4]  # Parent ID in tag table
-                if parent_id not in seen:  # cannot insert child if parent not present
-                    data2.append(row)  # add it back on list to  imported
-                    continue  # circle back around for next item
-                parent = seen[parent_id]  # model row item object of parent
-            database_id = row[0]  # tag database row id  the row of source data
-            #        new_data = {row[3], row[0]}
+                parent_id = row[4]          # Parent ID in tag table
+                if parent_id not in seen:   # cannot insert child if parent not present
+                    data2.append(row)       # add it back on list to  imported
+                    continue                # circle back around for next item
+                parent = seen[parent_id]    # model row item object of parent
+            database_id = row[0]            # tag database row id  the row of source data
             if row[1] == 0:  # Level - Base
-                # parent.appendRow([QStandardItem(row[3])])
-                print("inserting base row")
-                # print(row[2])
+                # print("inserting base row")
                 treedata = (row[3], str(row[0]), row[7], str(row[4]))
                 treedataobj = TreeItem(treedata, parent)
                 treedataobj.setDropEnabled(True)
@@ -605,7 +595,6 @@ class TreeModel(QtCore.QAbstractItemModel):
                 parent.appendChild(treedataobj)
 
             else:
-                # parent.appendRow([QStandardItem(row[3])])   -- original row with just one item - save in notes
                 treedata = (row[3], str(row[0]), row[7], str(row[4]))
                 treedataobj = TreeItem(treedata, parent)  # this will append item into tree
                 if row[2] == 0:  # is not group row, ie no children
@@ -678,7 +667,7 @@ class myTreeView(QTreeView):
         sq = "Select * from tags ORDER BY TagClass, level, tag"
         myphotodatabase.execute(sq)
         data2 = curr.fetchall()
-        print(len(data2))
+        # print(len(data2))
         myphotodatabase.close_database()
         headers = ("Tag", "Database Row", "Sort Column", "DB Parent Row")
         # proxy sortfilter stuff
@@ -697,16 +686,16 @@ class myTreeView(QTreeView):
         self.expandToDepth(1)
         self.setHeaderHidden(True)
         self.resizeColumnToContents(0)
-        self.setColumnHidden(3,True)  # hide all the columns we do not want to show.
-        self.setColumnHidden(2,True)  # these columns carry data we need elsewhere
-        self.setColumnHidden(1,True)
+        self.setColumnHidden(3, True)        # hide all the columns we do not want to show.
+        self.setColumnHidden(2, True)        # these columns carry data we need elsewhere
+        self.setColumnHidden(1, True)
         self.setUniformRowHeights(True)
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)  # otherwise the built in edit of items happens, model doesn't handle this
-        self.setExpandsOnDoubleClick(True) #  only works if edit triggers is off
+        self.setExpandsOnDoubleClick(True)                      # only works if edit triggers is off
         self.setAlternatingRowColors(True)
         self.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.setVerticalScrollMode(QAbstractItemView.ScrollPerItem)
-        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows) # must be this for our implementation, other setting disable delete in drag and drop
+        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)    # must be this for our implementation, other setting disable delete in drag and drop
         self.setSelectionMode(QAbstractItemView.ContiguousSelection)
 
         self.setAnimated(True)

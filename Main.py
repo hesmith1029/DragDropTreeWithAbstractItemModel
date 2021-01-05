@@ -67,8 +67,8 @@ class UiMainWindow(object):
         # self.insertColumnAction.setObjectName("insertColumnAction")
         # self.removeColumnAction = QtWidgets.QAction(main_window)
         # self.removeColumnAction.setObjectName("removeColumnAction")
-        self.insertChildAction = QtWidgets.QAction(main_window)
-        self.insertChildAction.setObjectName("insertChildAction")
+        # self.insertChildAction = QtWidgets.QAction(main_window)
+        # self.insertChildAction.setObjectName("insertChildAction")
         self.fileMenu.addAction(self.exitAction)
         # self.actionsMenu.addAction(self.insertRowAction)
         # self.actionsMenu.addAction(self.insertColumnAction)
@@ -76,7 +76,7 @@ class UiMainWindow(object):
         self.actionsMenu.addAction(self.removeRowAction)
         # self.actionsMenu.addAction(self.removeColumnAction)
         self.actionsMenu.addSeparator()
-        self.actionsMenu.addAction(self.insertChildAction)
+        # self.actionsMenu.addAction(self.insertChildAction)
         self.menubar.addAction(self.fileMenu.menuAction())
         self.menubar.addAction(self.actionsMenu.menuAction())
 
@@ -98,8 +98,8 @@ class UiMainWindow(object):
         # self.insertColumnAction.setShortcut(_translate("main_window", "Ctrl+I, C"))
         # self.removeColumnAction.setText(_translate("main_window", "Remove Column"))
         # self.removeColumnAction.setShortcut(_translate("main_window", "Ctrl+R, C"))
-        self.insertChildAction.setText(_translate("main_window", "Insert Child"))
-        self.insertChildAction.setShortcut(_translate("main_window", "Ctrl+N"))
+        # self.insertChildAction.setText(_translate("main_window", "Insert Child"))
+        # self.insertChildAction.setShortcut(_translate("main_window", "Ctrl+N"))
 
 
 class MainWindow(QMainWindow, UiMainWindow):
@@ -107,11 +107,11 @@ class MainWindow(QMainWindow, UiMainWindow):
         super(MainWindow, self).__init__(parent)
         self.setup_ui(self)
         self.exitAction.triggered.connect(QApplication.instance().quit)
-        self.view.selectionModel().selectionChanged.connect(self.updateActions)
-        self.actionsMenu.aboutToShow.connect(self.updateActions)
+        # self.view.selectionModel().selectionChanged.connect(self.updateActions)  # interfers with drag and drop selection
+        # self.actionsMenu.aboutToShow.connect(self.updateActions)
         # self.insertRowAction.triggered.connect(self.insertRow)
         # self.insertColumnAction.triggered.connect(self.insertColumn)
-        self.removeRowAction.triggered.connect(self.removeRow)
+        # self.removeRowAction.triggered.connect(self.removeRow)
         # self.removeColumnAction.triggered.connect(self.removeColumn)
         # self.insertChildAction.triggered.connect(self.insertChild)
 
@@ -187,7 +187,7 @@ class MainWindow(QMainWindow, UiMainWindow):
 
         if (model.removeRow(index.row(), index.parent())):
             self.updateActions()
-
+    '''
     def updateActions(self):
         print("Entered updateActions in Main Window")
         hasSelection = not self.view.selectionModel().selection().isEmpty()
@@ -207,7 +207,7 @@ class MainWindow(QMainWindow, UiMainWindow):
                 self.statusBar().showMessage("Position: (%d,%d)" % (row, column))
             else:
                 self.statusBar().showMessage("Position: (%d,%d) in top level" % (row, column))
-
+    '''
 
 
 if __name__ == "__main__":
