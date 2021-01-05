@@ -4,14 +4,13 @@ import os.path
 
 class PhotoDatabase:
     """This database holds all the pointers to photos orig and thumbs.  It also holds all the tag info"""
-#    DB_LOCATION = "data\HerbPhotoDatabase.db"
 
     def __init__(self, db_location):
         super(PhotoDatabase, self).__init__()
         # db_location is guaranteed to exist by prior call to create data dir in main code.
         # print("Start of init " + db_location)
         self.connected = False
-        self.database = db_location + "\\HerbPhotoDatabase.db"
+        self.database = db_location + "\\EnjoyYP.db"
         # this will connect to database, but also create empty database if it does not exist
         self.connect()
 
@@ -139,27 +138,6 @@ class PhotoDatabase:
 
     def commit(self):
         self.connection.commit()
-    '''
-    def photos_to_display(self, howmany, filter = None):
-        # print("In photos to display")
-        if not self.connected:
-            print("Databsae not connected")
-            self.connect()
-        sqlcmd = "SELECT * from Photos ORDER BY dateTimeOriginal DESC "
-        self.execute(sqlcmd)
-        photoitems = self.cursor.fetchmany(howmany)
-        return photoitems
-
-    def link_tag_to_photo(self, photoid, tagid):
-        # print("in link tag to photo")
-        sql_fields = "INSERT INTO TagLink (documentID, TagPointer)"
-        sql_data = 'VALUES ( " ' + photoid + '", "' + tagid + '" ); '
-        sqlcmd = sql_fields + sql_data
-        self.execute(sqlcmd)
-        self.commit()
-        #   Need to make sure we do not have duplicate rows
-        #   Need to see if we can postpone commit until all tagging is done
-    '''
 
     def update_parent_tag(self, tag_row = None, new_parent = None):
         print("Reached update parent tag")
